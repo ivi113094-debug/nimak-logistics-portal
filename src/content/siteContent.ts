@@ -121,6 +121,8 @@ export const defaultSiteContent: LocalizedSiteContent = {
         { title: "Меѓународен транспорт", desc: "Комплетна логистика од врата до врата низ Европа и пошироко." },
         { title: "Царинско посредување", desc: "Професионална царинска обработка и документација." },
         { title: "Следење на пратки", desc: "Целосна транспарентност и контрола на испораката." },
+        { title: "Бродски транспорт", desc: "Сигурен и ефикасен превоз на стока преку меѓународни поморски рути." },
+        { title: "Складирање", desc: "Безбедно и организирано складирање на стока со целосна контрола и флексибилност." },
       ],
     },
     whyUs: {
@@ -196,6 +198,8 @@ export const defaultSiteContent: LocalizedSiteContent = {
         { title: "International transport", desc: "Complete door-to-door logistics across Europe and beyond." },
         { title: "Customs brokerage", desc: "Professional customs processing and documentation support." },
         { title: "Shipment tracking", desc: "Full transparency and control over every delivery." },
+        { title: "Sea freight", desc: "Reliable and efficient cargo transport through international maritime routes." },
+        { title: "Warehousing", desc: "Safe and organized goods storage with full control and flexibility." },
       ],
     },
     whyUs: {
