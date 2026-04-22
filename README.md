@@ -1,3 +1,3 @@
-# Welcome to your Lovable project
+# NIMAK Logistics Portal
 
-TODO: Document your project here
+Website and admin dashboard for NIMAK transport and logistics.
