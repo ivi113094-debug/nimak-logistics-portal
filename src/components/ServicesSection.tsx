@@ -1,8 +1,18 @@
 import { motion } from "framer-motion";
-import { Truck, Globe, FileCheck, MapPin } from "lucide-react";
+import { FileCheck, Globe, Ship, Truck, Warehouse } from "lucide-react";
 import type { SiteContent } from "@/content/siteContent";
 
-const icons = [Truck, Globe, FileCheck, MapPin];
+const getServiceIcon = (title: string) => {
+  const normalizedTitle = title.toLowerCase();
+
+  if (normalizedTitle.includes("домашен") || normalizedTitle.includes("domestic")) return Truck;
+  if (normalizedTitle.includes("меѓународен") || normalizedTitle.includes("international")) return Globe;
+  if (normalizedTitle.includes("царин") || normalizedTitle.includes("customs")) return FileCheck;
+  if (normalizedTitle.includes("брод") || normalizedTitle.includes("sea freight")) return Ship;
+  if (normalizedTitle.includes("складира") || normalizedTitle.includes("warehous")) return Warehouse;
+
+  return Truck;
+};
 
 interface ServicesSectionProps {
   content: SiteContent["services"];
@@ -25,7 +35,7 @@ const ServicesSection = ({ content }: ServicesSectionProps) => (
 
       <div className="grid md:grid-cols-2 gap-4 sm:gap-8">
         {content.items.map((item, index) => {
-          const Icon = icons[index % icons.length];
+          const Icon = getServiceIcon(item.title);
           return (
             <motion.div
               key={`${item.title}-${index}`}
