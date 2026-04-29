@@ -36,6 +36,7 @@ const ServicesSection = ({ content }: ServicesSectionProps) => (
       <div className="grid md:grid-cols-2 gap-4 sm:gap-8">
         {content.items.map((item, index) => {
           const Icon = getServiceIcon(item.title);
+          const isCenteredLastCard = content.items.length % 2 === 1 && index === content.items.length - 1;
           return (
             <motion.div
               key={`${item.title}-${index}`}
@@ -43,7 +44,9 @@ const ServicesSection = ({ content }: ServicesSectionProps) => (
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-card rounded-xl p-5 sm:p-8 flex flex-col sm:flex-row gap-4 sm:gap-5 shadow-sm border border-border hover:shadow-md transition-shadow group"
+              className={`bg-card rounded-xl p-5 sm:p-8 flex flex-col sm:flex-row gap-4 sm:gap-5 shadow-sm border border-border hover:shadow-md transition-shadow group ${
+                isCenteredLastCard ? "md:col-span-2 md:mx-auto md:max-w-[calc(50%-1rem)] md:w-full" : ""
+              }`}
             >
               <div className="w-14 h-14 shrink-0 rounded-lg bg-red-brand/10 flex items-center justify-center group-hover:bg-red-brand/20 transition-colors">
                 <Icon className="text-red-brand" size={28} />
