@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FileCheck, Globe, Ship, Truck, Warehouse } from "lucide-react";
+import { FileCheck, Globe, Plane, Ship, Truck, Warehouse } from "lucide-react";
 import type { SiteContent } from "@/content/siteContent";
 
 const getServiceIcon = (title: string) => {
@@ -8,6 +8,7 @@ const getServiceIcon = (title: string) => {
   if (normalizedTitle.includes("домашен") || normalizedTitle.includes("domestic")) return Truck;
   if (normalizedTitle.includes("меѓународен") || normalizedTitle.includes("international")) return Globe;
   if (normalizedTitle.includes("царин") || normalizedTitle.includes("customs")) return FileCheck;
+  if (normalizedTitle.includes("авион") || normalizedTitle.includes("air freight")) return Plane;
   if (normalizedTitle.includes("брод") || normalizedTitle.includes("sea freight")) return Ship;
   if (normalizedTitle.includes("складира") || normalizedTitle.includes("warehous")) return Warehouse;
 
