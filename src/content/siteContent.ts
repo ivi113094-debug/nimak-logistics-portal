@@ -328,11 +328,34 @@ type SiteContentRow = {
 
 const cloneDefaults = (): LocalizedSiteContent => JSON.parse(JSON.stringify(defaultSiteContent)) as LocalizedSiteContent;
 
-const parseList = (value: string, fallback: FeatureItem[] | NavLinkItem[]) => {
+const mergeServiceItems = (
+  locale: SiteLocale,
+  parsedItems: FeatureItem[],
+  fallbackItems: FeatureItem[],
+): FeatureItem[] => {
+  const retiredTitles = new Set(locale === "mk" ? ["Следење на пратки"] : ["Shipment tracking"]);
+  const fallbackTitles = new Set(fallbackItems.map((item) => item.title));
+  const filteredParsed = parsedItems.filter((item) => !retiredTitles.has(item.title));
+
+  const mergedDefaults = fallbackItems.map((fallbackItem) => {
+    const existingItem = filteredParsed.find((item) => item.title === fallbackItem.title);
+    return existingItem ?? fallbackItem;
+  });
+
+  const customItems = filteredParsed.filter((item) => !fallbackTitles.has(item.title));
+
+  return [...mergedDefaults, ...customItems];
+};
+
+const parseList = (
+  value: string,
+  fallback: FeatureItem[] | NavLinkItem[],
+  options?: { locale: SiteLocale; sectionKey: keyof SiteContent; fieldKey: string },
+) => {
   try {
     const parsed = JSON.parse(value);
     if (!Array.isArray(parsed)) return fallback;
-    return parsed.filter(
+    const filtered = parsed.filter(
       (item): item is FeatureItem | NavLinkItem =>
         Boolean(
           item &&
@@ -340,6 +363,12 @@ const parseList = (value: string, fallback: FeatureItem[] | NavLinkItem[]) => {
             (("title" in item && "desc" in item) || ("label" in item && "href" in item)),
         ),
     ) as FeatureItem[] | NavLinkItem[];
+
+    if (options?.sectionKey === "services" && options.fieldKey === "items") {
+      return mergeServiceItems(options.locale, filtered as FeatureItem[], fallback as FeatureItem[]);
+    }
+
+    return filtered;
   } catch {
     return fallback;
   }
@@ -357,7 +386,11 @@ const applyFieldValue = (
 
   const fallbackValue = section[fieldKey];
   if (Array.isArray(fallbackValue)) {
-    section[fieldKey] = parseList(fieldValue, fallbackValue as FeatureItem[] | NavLinkItem[]);
+    section[fieldKey] = parseList(fieldValue, fallbackValue as FeatureItem[] | NavLinkItem[], {
+      locale,
+      sectionKey,
+      fieldKey,
+    });
     return;
   }
 
