@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import logo from "@/assets/nimak_logo.png";
 import type { SiteContent, SiteLocale } from "@/content/siteContent";
@@ -13,6 +14,8 @@ const localeOptions: SiteLocale[] = ["mk", "en"];
 
 const Navbar = ({ content, locale, onLocaleChange }: NavbarProps) => {
   const [open, setOpen] = useState(false);
+  const location = useLocation();
+  const getHref = (href: string) => (href.startsWith("#") && location.pathname !== "/" ? `/${href}` : href);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-navy-dark backdrop-blur-md border-b border-navy-light/20">
@@ -26,7 +29,7 @@ const Navbar = ({ content, locale, onLocaleChange }: NavbarProps) => {
             {content.links.map((link) => (
               <li key={link.href}>
                 <a
-                  href={link.href}
+                  href={getHref(link.href)}
                   className="text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground transition-colors font-heading tracking-wide"
                 >
                   {link.label}
@@ -51,7 +54,7 @@ const Navbar = ({ content, locale, onLocaleChange }: NavbarProps) => {
           </div>
 
           <a
-            href="#contact"
+            href={getHref("#contact")}
             className="inline-flex items-center px-5 py-2 rounded-md bg-red-brand text-accent-foreground font-heading font-semibold text-sm hover:opacity-90 transition-opacity"
           >
             {content.ctaLabel}
@@ -90,7 +93,7 @@ const Navbar = ({ content, locale, onLocaleChange }: NavbarProps) => {
             {content.links.map((link) => (
               <li key={link.href}>
                 <a
-                  href={link.href}
+                  href={getHref(link.href)}
                   onClick={() => setOpen(false)}
                   className="flex justify-center rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-primary-foreground/85 hover:text-primary-foreground font-heading text-base"
                 >
@@ -100,7 +103,7 @@ const Navbar = ({ content, locale, onLocaleChange }: NavbarProps) => {
             ))}
             <li>
               <a
-                href="#contact"
+                href={getHref("#contact")}
                 onClick={() => setOpen(false)}
                 className="inline-flex w-full items-center justify-center px-5 py-3 rounded-2xl bg-red-brand text-accent-foreground font-heading font-semibold text-sm"
               >
