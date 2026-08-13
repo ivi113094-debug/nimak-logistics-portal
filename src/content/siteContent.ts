@@ -11,6 +11,10 @@ export interface FeatureItem {
   desc: string;
 }
 
+export interface BlogItem extends FeatureItem {
+  body: string;
+}
+
 export interface SiteContent {
   navigation: {
     ctaLabel: string;
@@ -43,6 +47,13 @@ export interface SiteContent {
     title: string;
     description: string;
     items: FeatureItem[];
+  };
+  blog: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    readLabel: string;
+    topics: BlogItem[];
   };
   contact: {
     eyebrow: string;
@@ -84,6 +95,7 @@ export const defaultSiteContent: LocalizedSiteContent = {
         { label: "За нас", href: "#about" },
         { label: "Услуги", href: "#services" },
         { label: "Зошто ние", href: "#why-us" },
+        { label: "Блог", href: "#blog" },
         { label: "Контакт", href: "#contact" },
       ],
     },
@@ -137,6 +149,32 @@ export const defaultSiteContent: LocalizedSiteContent = {
         { title: "24/7 Поддршка", desc: "Секогаш достапни за вас по телефон и е-пошта." },
       ],
     },
+    blog: {
+      eyebrow: "Блог",
+      title: "Корисни теми од логистика",
+      description: "Изберете тема и прочитајте практични совети за транспорт, шпедиција и подготовка на пратки.",
+      readLabel: "Прочитај повеќе",
+      topics: [
+        {
+          title: "Како да ја подготвите пратката за транспорт",
+          desc: "Краток водич за пакување, означување и документи пред подигнување.",
+          body:
+            "Добрата подготовка ја намалува можноста за доцнење и оштетување. Проверете дали пратката е стабилно спакувана, дали има јасна адреса и контакт лице, и дали документите се подготвени пред пристигнување на возилото. За чувствителна или вредна стока, препорачливо е однапред да се договори начин на ракување и дополнителна заштита.",
+        },
+        {
+          title: "Што значи добра шпедиција",
+          desc: "Зошто точната документација е клучна за побрз проток на стока.",
+          body:
+            "Шпедицијата не е само пополнување документи. Таа вклучува координација помеѓу клиентот, превозникот и царинските служби. Кога податоците за стоката, вредноста, тежината и дестинацијата се точни, процесот оди побрзо и со помал ризик од дополнителни трошоци.",
+        },
+        {
+          title: "Домашен или меѓународен транспорт",
+          desc: "Како да изберете соодветна услуга според рок, дестинација и тип на стока.",
+          body:
+            "Изборот зависи од дестинацијата, рокот, количината и специфичните барања на стоката. За домашни испораки најважни се брзината и точната координација, додека кај меѓународниот транспорт голема улога имаат документацијата, граничните процедури и планирањето на рутата.",
+        },
+      ],
+    },
     contact: {
       eyebrow: "Контакт",
       title: "Контактирајте нè",
@@ -161,6 +199,7 @@ export const defaultSiteContent: LocalizedSiteContent = {
         { label: "About", href: "#about" },
         { label: "Services", href: "#services" },
         { label: "Why us", href: "#why-us" },
+        { label: "Blog", href: "#blog" },
         { label: "Contact", href: "#contact" },
       ],
     },
@@ -212,6 +251,32 @@ export const defaultSiteContent: LocalizedSiteContent = {
         { title: "Professional team", desc: "Experienced professionals taking care of every shipment." },
         { title: "Tailored service", desc: "Solutions adapted to your specific business needs." },
         { title: "24/7 Support", desc: "Always available for you by phone and email." },
+      ],
+    },
+    blog: {
+      eyebrow: "Blog",
+      title: "Useful logistics topics",
+      description: "Choose a topic and read practical guidance about transport, freight forwarding, and shipment preparation.",
+      readLabel: "Read more",
+      topics: [
+        {
+          title: "How to prepare a shipment for transport",
+          desc: "A short guide to packing, labeling, and documents before pickup.",
+          body:
+            "Good preparation reduces the chance of delays and damage. Make sure the shipment is packed securely, the delivery address and contact person are clear, and all documents are ready before the vehicle arrives. For sensitive or high-value goods, agree on handling requirements and extra protection in advance.",
+        },
+        {
+          title: "What good freight forwarding means",
+          desc: "Why accurate documentation is essential for faster cargo movement.",
+          body:
+            "Freight forwarding is more than paperwork. It coordinates the client, carrier, and customs process. When information about the goods, value, weight, and destination is accurate, the process moves faster and carries less risk of additional costs.",
+        },
+        {
+          title: "Domestic or international transport",
+          desc: "How to choose the right service based on deadline, destination, and cargo type.",
+          body:
+            "The right choice depends on destination, deadline, volume, and the specific requirements of the goods. Domestic deliveries depend heavily on speed and coordination, while international transport also requires documentation, border procedures, and careful route planning.",
+        },
       ],
     },
     contact: {
@@ -296,6 +361,18 @@ export const sectionDefinitions: Array<{
     ],
   },
   {
+    key: "blog",
+    label: "Блог",
+    description: "Секција со теми и текстови за читање.",
+    fields: [
+      { key: "eyebrow", label: "Наднаслов" },
+      { key: "title", label: "Наслов" },
+      { key: "description", label: "Опис", type: "textarea" },
+      { key: "readLabel", label: "Текст на копче" },
+      { key: "topics", label: "Блог теми", type: "list", itemLabel: "тема" },
+    ],
+  },
+  {
     key: "contact",
     label: "Контакт",
     description: "Контакт детали и текстови за формата.",
@@ -347,6 +424,22 @@ const mergeServiceItems = (
   return [...mergedDefaults, ...customItems];
 };
 
+const mergeNavigationLinks = (parsedLinks: NavLinkItem[], fallbackLinks: NavLinkItem[]): NavLinkItem[] => {
+  const parsedHrefs = new Set(parsedLinks.map((link) => link.href));
+  const missingDefaultLinks = fallbackLinks.filter((link) => !parsedHrefs.has(link.href));
+
+  if (!missingDefaultLinks.length) return parsedLinks;
+
+  const contactIndex = parsedLinks.findIndex((link) => link.href === "#contact");
+  if (contactIndex === -1) return [...parsedLinks, ...missingDefaultLinks];
+
+  return [
+    ...parsedLinks.slice(0, contactIndex),
+    ...missingDefaultLinks,
+    ...parsedLinks.slice(contactIndex),
+  ];
+};
+
 const parseList = (
   value: string,
   fallback: FeatureItem[] | NavLinkItem[],
@@ -366,6 +459,10 @@ const parseList = (
 
     if (options?.sectionKey === "services" && options.fieldKey === "items") {
       return mergeServiceItems(options.locale, filtered as FeatureItem[], fallback as FeatureItem[]);
+    }
+
+    if (options?.sectionKey === "navigation" && options.fieldKey === "links") {
+      return mergeNavigationLinks(filtered as NavLinkItem[], fallback as NavLinkItem[]);
     }
 
     return filtered;

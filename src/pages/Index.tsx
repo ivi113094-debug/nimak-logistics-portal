@@ -4,6 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import ServicesSection from "@/components/ServicesSection";
 import WhyUsSection from "@/components/WhyUsSection";
+import BlogSection from "@/components/BlogSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import { useSiteContent } from "@/hooks/useSiteContent";
@@ -34,6 +35,7 @@ const Index = () => {
       <AboutSection content={activeContent.about} />
       <ServicesSection content={activeContent.services} />
       <WhyUsSection content={activeContent.whyUs} />
+      <BlogSection content={activeContent.blog} />
       <ContactSection content={activeContent.contact} locale={locale} />
       <Footer navigation={activeContent.navigation} footer={activeContent.footer} />
     </div>

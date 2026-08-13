@@ -10,6 +10,7 @@ import {
   flattenSiteContent,
   localeLabels,
   sectionDefinitions,
+  type BlogItem,
   type FeatureItem,
   type LocalizedSiteContent,
   type NavLinkItem,
@@ -33,13 +34,14 @@ const ListEditor = ({
   itemLabel,
   onChange,
 }: {
-  items: FeatureItem[] | NavLinkItem[];
+  items: BlogItem[] | FeatureItem[] | NavLinkItem[];
   itemLabel: string;
-  onChange: (next: FeatureItem[] | NavLinkItem[]) => void;
+  onChange: (next: BlogItem[] | FeatureItem[] | NavLinkItem[]) => void;
 }) => {
   const isNavList = items.every((item) => "label" in item && "href" in item);
+  const supportsBody = !isNavList && (items.some((item) => "body" in item) || itemLabel.toLowerCase().includes("тема"));
 
-  const updateItem = (index: number, key: "title" | "desc" | "label" | "href", value: string) => {
+  const updateItem = (index: number, key: "title" | "desc" | "body" | "label" | "href", value: string) => {
     const next = items.map((item, currentIndex) => (currentIndex === index ? { ...item, [key]: value } : item));
     onChange(next);
   };
@@ -48,7 +50,12 @@ const ListEditor = ({
     onChange(
       isNavList
         ? [...items, { label: `Нов ${itemLabel}`, href: "#section" }]
-        : [...items, { title: `Нова ${itemLabel}`, desc: "Ажурирај го овој опис." }],
+        : [
+            ...items,
+            supportsBody
+              ? { title: `Нова ${itemLabel}`, desc: "Ажурирај го овој опис.", body: "Ажурирај го текстот за читање." }
+              : { title: `Нова ${itemLabel}`, desc: "Ажурирај го овој опис." },
+          ],
     );
   };
 
@@ -90,6 +97,12 @@ const ListEditor = ({
                 <Label>Опис</Label>
                 <Textarea rows={3} value={item.desc} onChange={(event) => updateItem(index, "desc", event.target.value)} />
               </div>
+              {"body" in item && (
+                <div className="space-y-2">
+                  <Label>Текст за читање</Label>
+                  <Textarea rows={6} value={item.body} onChange={(event) => updateItem(index, "body", event.target.value)} />
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -317,7 +330,7 @@ const AdminDashboard = () => {
                           <div key={field.key} className="space-y-2">
                             <Label>{field.label}</Label>
                             <ListEditor
-                              items={value as FeatureItem[] | NavLinkItem[]}
+                              items={value as BlogItem[] | FeatureItem[] | NavLinkItem[]}
                               itemLabel={field.itemLabel ?? "елемент"}
                               onChange={(next) => updateField(activeLocale, section.key, field.key as never, next as never)}
                             />
